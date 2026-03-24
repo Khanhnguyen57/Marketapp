@@ -13,7 +13,6 @@ function DetailPage() {
     const [quantity, setQuantity] = useState(1);
 
     useEffect(() => {
-        // Cuộn lên đầu trang mỗi khi vào trang chi tiết hoặc chuyển sản phẩm
         window.scrollTo(0, 0);
         setLoading(true);
 

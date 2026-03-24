@@ -1,14 +1,12 @@
 import { useNavigate } from "react-router-dom";
 
 function AppNavbar() {
-  // Khởi tạo hook useNavigate
   const navigate = useNavigate();
 
   return (
     <nav className="bg-white border-b border-gray-100 py-4 px-4 md:px-12">
       <div className="max-w-screen-2xl mx-auto flex items-center justify-between">
 
-        {/* Cụm bên trái: Home & Shop */}
         <div className="flex items-center space-x-6 w-1/3">
           <span 
             onClick={() => navigate('/')} 
@@ -24,7 +22,6 @@ function AppNavbar() {
           </span>
         </div>
 
-        {/* Cụm giữa: Logo BOUTIQUE (Bấm vào logo cũng về trang chủ cho chuẩn UX) */}
         <div className="w-1/3 text-center">
           <span 
             onClick={() => navigate('/')} 
@@ -34,10 +31,7 @@ function AppNavbar() {
           </span>
         </div>
 
-        {/* Cụm bên phải: Cart & Login */}
         <div className="flex items-center justify-end space-x-6 w-1/3 text-gray-800 italic">
-          
-          {/* Nút Cart */}
           <span 
             onClick={() => navigate('/cart')} 
             className="flex items-center space-x-1 hover:text-yellow-600 transition-colors cursor-pointer"
@@ -48,9 +42,8 @@ function AppNavbar() {
             <span>Cart</span>
           </span>
 
-          {/* Nút Login */}
           <span 
-            onClick={() => navigate('/login')} 
+            onClick={() => navigate('/register')} 
             className="flex items-center space-x-1 hover:text-yellow-600 transition-colors cursor-pointer"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
