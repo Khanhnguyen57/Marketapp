@@ -3,14 +3,52 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '../component/layout/navbar';
 import Footer from '../component/layout/footer';
 
+
 function DetailPage() {
     const { id } = useParams(); // Lấy tham số 'id' từ URL
-    const navigate = useNavigate();
+    const navigate = useNavigate()
+
     
     const [product, setProduct] = useState(null);
     const [relatedProducts, setRelatedProducts] = useState([]);
     const [isLoading, setLoading] = useState(true);
     const [quantity, setQuantity] = useState(1);
+
+    const handleAddToCart = () => {
+  // 1. Lấy thông tin user đang đăng nhập
+        const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+        
+        if (!currentUser) {
+            alert("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng!");
+            // Có thể dùng navigate('/login') để đẩy người dùng ra trang đăng nhập
+            return;
+        }
+
+        // 2. Tạo khóa riêng cho giỏ hàng của user này (VD: cart_admin@gmail.com)
+        const cartKey = `cart_${currentUser.email}`;
+
+        // 3. Lấy giỏ hàng CỦA RIÊNG USER ĐÓ lên
+        const existingCart = JSON.parse(localStorage.getItem(cartKey)) || [];
+        
+        // 4. Logic kiểm tra và thêm sản phẩm như cũ
+        const existingProductIndex = existingCart.findIndex(item => item._id === product._id);
+        
+        if (existingProductIndex >= 0) {
+            existingCart[existingProductIndex].quantity += quantity;
+        } else {
+            existingCart.push({
+            _id: product._id,
+            name: product.name,
+            price: product.price,
+            img: product.img1,
+            quantity: quantity
+            });
+        }
+        
+        // 5. Lưu ngược lại xuống localStorage với cái TÊN RIÊNG đó
+        localStorage.setItem(cartKey, JSON.stringify(existingCart));
+        alert('Đã thêm vào giỏ hàng!');
+    };
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -37,7 +75,7 @@ function DetailPage() {
                 console.error('Lỗi fetch data:', error);
                 setLoading(false);
             });
-    }, [id]); // Chú ý: Đưa 'id' vào dependency array để component render lại khi click vào 'Related Product'
+    }, [id]); 
 
     if (isLoading) {
         return <div className="text-center py-20 text-xl min-h-screen">Đang tải thông tin sản phẩm... ⏳</div>;
@@ -51,7 +89,7 @@ function DetailPage() {
         <div className="flex flex-col min-h-screen">
             <Navbar />
 
-            {/* Banner Header (Giống Shop Page) */}
+            
             <div className="bg-[#F8F9FA] px-10 py-12 flex justify-between items-center mb-10 mx-4 md:mx-16 mt-4">
                 <h1 className="text-3xl italic font-normal uppercase tracking-widest text-gray-800">Detail</h1>
                 <span className="text-gray-400 italic uppercase tracking-wider text-sm">Detail</span>
@@ -59,11 +97,10 @@ function DetailPage() {
 
             <div className="container mx-auto px-4 md:px-16 mb-16">
                 
-                {/* 1. THÔNG TIN SẢN PHẨM CHÍNH */}
+               
                 <div className="flex flex-col md:flex-row gap-8 mb-16">
-                    {/* Cột Ảnh */}
+                   
                     <div className="w-full md:w-1/2 flex gap-4">
-                        {/* Cột ảnh nhỏ (thumbnails) */}
                         <div className="flex flex-col gap-2 w-1/5">
                             <img src={product.img1} alt="thumb" className="w-full object-cover cursor-pointer border hover:border-black transition" />
                             <img src={product.img2} alt="thumb" className="w-full object-cover cursor-pointer border hover:border-black transition" />
@@ -91,14 +128,14 @@ function DetailPage() {
                             <span className="text-gray-500 italic">{product.category}</span>
                         </div>
 
-                        {/* Chọn số lượng và nút thêm vào giỏ */}
+                       
                         <div className="flex items-center border border-gray-300 w-fit">
                             <div className="px-4 py-2 italic text-gray-500 uppercase tracking-widest border-r border-gray-300">Quantity</div>
                             <button 
                                 className="px-4 py-2 text-xl hover:bg-gray-100"
                                 onClick={() => setQuantity(prev => (prev > 1 ? prev - 1 : 1))}
                             >
-                                <span>&#9664;</span> {/* Mũi tên trái */}
+                                <span>&#9664;</span> 
                             </button>
                             <input 
                                 type="text" 
@@ -110,9 +147,11 @@ function DetailPage() {
                                 className="px-4 py-2 text-xl hover:bg-gray-100"
                                 onClick={() => setQuantity(prev => prev + 1)}
                             >
-                                <span>&#9654;</span> {/* Mũi tên phải */}
+                                <span>&#9654;</span> 
                             </button>
-                            <button className="bg-black text-white px-8 py-2 ml-4 italic tracking-widest hover:bg-gray-800 transition">
+                            <button 
+                                onClick={handleAddToCart}
+                                className="bg-black text-white px-8 py-2 ml-4 italic tracking-widest hover:bg-gray-800 transition">
                                 Add to cart
                             </button>
                         </div>

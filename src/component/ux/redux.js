@@ -1,4 +1,4 @@
-// File: redux/popupReducer.js
+
 const initialState = {
     isOpen: false,
     productData: null,
